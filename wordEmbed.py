@@ -8,7 +8,11 @@ import string
 wordVectors = {}
 f = open(sys.argv[1], "r",  encoding="utf-8")
 for line in f:
-    wordVectors[line.split()[0]] = line.split(' ', 1)[1].replace("\n", "")
+    tempList = []
+    tempString = line.split(' ', 1)[1].replace("\n", "")
+    for number in range(len(tempString.split())):
+        tempList.append(float(tempString.split()[number]))
+    wordVectors[line.split()[0]] = tempList
 f.close()
 
 # Democratic Embeddings
