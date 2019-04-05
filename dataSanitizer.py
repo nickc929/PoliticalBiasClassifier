@@ -9,7 +9,7 @@ def main():
     corpus = inFile.readlines()
     dataList = []
     targetList = []
-    outFile = outFile = open("processedPost2016ElectionRepublicans.txt","w")
+    outFile = outFile = open("chuckGrassleyProcessed.txt","w")
     for line in corpus:
         line = line.replace("\\xe2\\x80\\x99","'")
         index = line.index("\tb") - 1
