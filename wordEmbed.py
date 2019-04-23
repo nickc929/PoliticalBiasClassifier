@@ -4,6 +4,8 @@ import numpy as np
 from matplotlib import pyplot
 
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
@@ -333,4 +335,17 @@ pyplot.axvline(predictions.mean())
 pyplot.plot([0.4, 0.6], [0.4, 0.6])
 pyplot.legend(loc='upper left')
 pyplot.show()
+
+
+# ROC Curve
+fpr, tpr, threshold = roc_curve(y_test, predictions)
+area = auc(fpr, tpr)
+pyplot.plot([0, 1], [0, 1], 'k--')
+pyplot.plot(fpr, tpr, label='Keras (area = {:.3f})'.format(area))
+pyplot.xlabel('False positive rate')
+pyplot.ylabel('True positive rate')
+pyplot.title('ROC curve')
+pyplot.legend(loc='best')
+pyplot.show()
+
 
