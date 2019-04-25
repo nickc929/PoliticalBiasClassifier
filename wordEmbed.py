@@ -4,6 +4,8 @@ import numpy as np
 from matplotlib import pyplot
 
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.layers import LSTM
@@ -353,3 +355,15 @@ demo_predictions = model.predict(np.array(demoEmbeds))
 print('Democrat Biases', demo_predictions.min(), demo_predictions.max())
 print(most_biased_statements('mergedDemo.txt', demo_predictions.argmin(), demo_predictions.argmax()))
 
+
+# ROC Curve
+fpr, tpr, threshold = roc_curve(y_test, predictions)
+area = auc(fpr, tpr)
+pyplot.clf()
+pyplot.plot([0, 1], [0, 1], 'k--')
+pyplot.plot(fpr, tpr, label='Keras (area = {:.3f})'.format(area))
+pyplot.xlabel('False positive rate')
+pyplot.ylabel('True positive rate')
+pyplot.title('ROC curve')
+pyplot.legend(loc='best')
+pyplot.show()
