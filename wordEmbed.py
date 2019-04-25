@@ -5,7 +5,7 @@ from matplotlib import pyplot
 
 from sklearn.metrics import confusion_matrix
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.layers import LSTM
 
 # Fix random seed for reproducibility
@@ -249,7 +249,8 @@ print('y_train', y_train.shape, 'y_test', y_test.shape)
 
 # Create model
 model = Sequential()
-model.add(LSTM(32, input_shape=(None, 25)))
+model.add(LSTM(32, input_shape=(None, wordVectorLength)))
+# model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 print(model.summary())
@@ -293,7 +294,7 @@ pyplot.title('Accuracy')
 pyplot.plot(history.history['acc'], label='train')
 pyplot.plot(history.history['val_acc'], label='test')
 pyplot.legend()
-# pyplot.show()
+pyplot.show()
 
 
 # Individual politician scores
@@ -321,7 +322,7 @@ for politician in politicians:
         post_election_dem_scores.append(post_score)
     else:
         post_election_rep_scores.append(post_score)
-    print(politician, ':\t', pre_score, '\t', post_score)
+    print(politician, ':\t', pre_score, '\t', post_score, '\t', (pre_score+post_score) / 2)
 
 pyplot.clf()
 pyplot.scatter(pre_election_dem_scores, post_election_dem_scores, color='blue', marker='o', label='democrats')
@@ -333,4 +334,22 @@ pyplot.axvline(predictions.mean())
 pyplot.plot([0.4, 0.6], [0.4, 0.6])
 pyplot.legend(loc='upper left')
 pyplot.show()
+
+
+def most_biased_statements(file_path, mini, maxi):
+    f = open(file_path, "r", encoding="utf-8")
+    lines = f.readlines()
+    f.close()
+    return lines[mini], lines[maxi]
+
+
+repub_predictions = model.predict(np.array(repubEmbeds))
+# print('Indices', repub_predictions.argmin(), repub_predictions.argmax())
+print('Republican Biases', repub_predictions.min(), repub_predictions.max())
+print(most_biased_statements('mergedRepub.txt', repub_predictions.argmin(), repub_predictions.argmax()))
+
+demo_predictions = model.predict(np.array(demoEmbeds))
+# print('Indices', demo_predictions.argmin(), demo_predictions.argmax())
+print('Democrat Biases', demo_predictions.min(), demo_predictions.max())
+print(most_biased_statements('mergedDemo.txt', demo_predictions.argmin(), demo_predictions.argmax()))
 
